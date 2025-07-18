@@ -1,0 +1,4 @@
+-r requirements.txt
+black[d]
+pylint
+git+https://github.com/agronholm/sqlacodegen.git
