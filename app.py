@@ -47,11 +47,11 @@ def webhook():
         # Live print of the JSON payload, done with print() because of encoding errors
         print(
             str(datetime.datetime.now()).replace(".", ",")[:-3],
-            f"Incoming notification: {json.dumps(tg_notification)}",
+            f"New update: {json.dumps(tg_notification)}",
         )
 
     response = "OK"
-    return response
+    return response, 200
 
 
 @app.route("/", methods=["GET"])
