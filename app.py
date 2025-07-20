@@ -54,8 +54,8 @@ def webhook():
         )
 
         message = {
-            "first_name": tg_notification["business_message"]["chat"]["first_name"],
-            "user_id": tg_notification["business_message"]["chat"]["id"],
+            "first_name": tg_notification["business_message"]["from"]["first_name"],
+            "user_id": tg_notification["business_message"]["from"]["id"],
             "message_id": tg_notification["business_message"]["message_id"],
             "text": tg_notification["business_message"]["text"],
         }
@@ -69,8 +69,8 @@ def webhook():
             # "parse_mode": "Markdown",
             "disable_web_page_preview": 1,
             "text": (
-                f"{message['first_name']} ({message["user_id"]}) said:\n\n"
-                f"{message['text']} (id: {message['message_id']})"
+                f"{message['first_name']} ({message["user_id"]}) said (id: {message['message_id']}):\n\n"
+                f"{message['text']}"
             ),
         }
 
