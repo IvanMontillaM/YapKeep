@@ -5,7 +5,8 @@ import os
 
 from flask import Flask, request
 from flask_executor import Executor
-from flask_sqlalchemy import SQLAlchemy
+
+# from flask_sqlalchemy import SQLAlchemy
 
 from bot import misc
 
@@ -50,7 +51,7 @@ IS_PRETTYPRINT = bool(misc.str_to_bool(os.getenv("OPT_PRETTYPRINT").strip()))
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = IS_PRETTYPRINT
 
 # Set database connection
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
 # Set threading pool
 THREAD_EXCEPTIONS_ECHO = bool(
