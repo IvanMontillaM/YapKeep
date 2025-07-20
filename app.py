@@ -8,8 +8,6 @@ from flask_executor import Executor
 
 from bot import misc
 
-# from flask_sqlalchemy import SQLAlchemy
-
 logging.config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
@@ -19,35 +17,8 @@ app = Flask(__name__)
 BOT_WEBHOOK_KEY = os.getenv("BOT_WEBHOOK_KEY").strip()
 BOT_TGID = int(os.getenv("TG_API_KEY").strip().split(":")[0])
 IS_PRETTYPRINT = bool(misc.str_to_bool(os.getenv("OPT_PRETTYPRINT").strip()))
-# db = {
-#     "username": os.getenv("DB_USERNAME").strip(),
-#     "password": os.getenv("DB_PASSWORD").strip(),
-#     "hostname": os.getenv("DB_HOSTNAME").strip(),
-#     "port": os.getenv("DB_PORT").strip(),
-#     "database": os.getenv("DB_DATABASE").strip(),
-#     # "ssl_ca_path": os.getenv("DB_SSL_CA").strip(),
-#     "options": {
-#         "track_modifications": bool(
-#             misc.str_to_bool(os.getenv("DB_OPT_TRACK_MODIFICATIONS").strip())
-#         ),
-#         "echo": bool(misc.str_to_bool(os.getenv("DB_OPT_ECHO").strip())),
-#     },
-# }
 
 # Set application configuration
-# app.config["SQLALCHEMY_DATABASE_URI"] = (
-#     f"mysql+mysqlconnector://{db['username']}:{db['password']}@{db['hostname']}:{db['port']}/{db['database']}"
-# )
-# app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-#     "connect_args": {
-#         "ssl_ca": db["ssl_ca_path"],
-#         # TODO: Ensure SSL CA usage on DigitalOcean
-#         # "ssl_verify_cert": True,
-#         # "ssl_verify_identity": True,
-#     }
-# }
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = db["options"]["track_modifications"]
-# app.config["SQLALCHEMY_ECHO"] = db["options"]["echo"]
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = IS_PRETTYPRINT
 
 # Set database connection
@@ -62,7 +33,7 @@ e = Executor(app)
 
 
 # Main webhook to receive notifications from Telegram
-@app.route(f"/yk/{BOT_WEBHOOK_KEY}", methods=["POST"])
+@app.route(f"/webhook/{BOT_WEBHOOK_KEY}", methods=["POST"])
 def webhook():
     """Main webhook to receive Telegram notifications.
 
