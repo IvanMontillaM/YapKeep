@@ -6,9 +6,9 @@ import os
 from flask import Flask, request
 from flask_executor import Executor
 
-# from flask_sqlalchemy import SQLAlchemy
-
 from bot import misc
+
+# from flask_sqlalchemy import SQLAlchemy
 
 logging.config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ e = Executor(app)
 
 
 # Main webhook to receive notifications from Telegram
-@app.route(f"/cf/{BOT_WEBHOOK_KEY}", methods=["POST"])
+@app.route(f"/yk/{BOT_WEBHOOK_KEY}", methods=["POST"])
 def webhook():
     """Main webhook to receive Telegram notifications.
 
@@ -78,6 +78,9 @@ def webhook():
             str(datetime.datetime.now()).replace(".", ",")[:-3],
             f"Incoming notification: {json.dumps(tg_notification)}",
         )
+
+    response = "OK"
+    return response
 
 
 @app.route("/", methods=["GET"])
