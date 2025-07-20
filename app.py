@@ -3,6 +3,7 @@ import json
 import logging.config
 import os
 
+import requests as rq
 from flask import Flask, request
 from flask_executor import Executor
 
@@ -17,6 +18,8 @@ app = Flask(__name__)
 BOT_WEBHOOK_KEY = os.getenv("BOT_WEBHOOK_KEY").strip()
 BOT_TGID = int(os.getenv("TG_API_KEY").strip().split(":")[0])
 IS_PRETTYPRINT = bool(misc.str_to_bool(os.getenv("OPT_PRETTYPRINT").strip()))
+TG_OUTPUT_CHAT_ID = os.getenv("TG_OUTPUT_CHAT_ID").strip()
+API_ENDPOINT = "https://api.telegram.org/bot" + os.getenv("TG_API_KEY").strip()
 
 # Set application configuration
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = IS_PRETTYPRINT
@@ -48,6 +51,32 @@ def webhook():
         print(
             str(datetime.datetime.now()).replace(".", ",")[:-3],
             f"New update: {json.dumps(tg_notification)}",
+        )
+
+        message = {
+            "first_name": tg_notification["business_message"]["chat"]["first_name"],
+            "user_id": tg_notification["business_message"]["chat"]["id"],
+            "message_id": tg_notification["business_message"]["message_id"],
+            "text": tg_notification["business_message"]["text"],
+        }
+
+        # Set appropriate Telegram api_method to call
+        api_method = API_ENDPOINT + "/sendMessage"
+
+        # Prepare request params
+        params = {
+            "chat_id": TG_OUTPUT_CHAT_ID,
+            # "parse_mode": "Markdown",
+            "disable_web_page_preview": 1,
+            "text": (
+                f"{message['first_name']} ({message["user_id"]}) said:\n\n"
+                f"{message['text']} (id: {message['message_id']})"
+            ),
+        }
+
+        rq.post(
+            api_method,
+            params=params,
         )
 
     response = "OK"
