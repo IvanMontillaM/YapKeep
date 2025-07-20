@@ -24,9 +24,6 @@ API_ENDPOINT = "https://api.telegram.org/bot" + os.getenv("TG_API_KEY").strip()
 # Set application configuration
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = IS_PRETTYPRINT
 
-# Set database connection
-# db = SQLAlchemy(app)
-
 # Set threading pool
 THREAD_EXCEPTIONS_ECHO = bool(
     misc.str_to_bool(os.getenv("THREAD_EXCEPTIONS_ECHO").strip())
