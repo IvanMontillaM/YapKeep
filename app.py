@@ -105,6 +105,7 @@ def webhook():
                 response = "OK"
                 return response, 200
 
+            # TODO: Add handlers for Contacts, Locations and Venues
             media_handlers = [
                 "document",
                 "photo",
