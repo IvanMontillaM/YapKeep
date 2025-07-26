@@ -207,7 +207,34 @@ def webhook():
                 params=params,
             )
 
-        # elif tg_update_type == "deleted_business_messages":
+        elif tg_update_type == "deleted_business_messages":
+
+            bizupdate = tg_update[tg_update_type]
+
+            message = {
+                "first_name": bizupdate["chat"]["first_name"],
+                "user_id": bizupdate["chat"]["id"],
+                "message_ids": bizupdate["message_ids"],
+            }
+
+            api_method = API_ENDPOINT + "/sendMessage"
+
+            # Prepare request params
+            params = {
+                "chat_id": TG_OUTPUT_CHAT_ID,
+                # "parse_mode": "Markdown",
+                "disable_web_page_preview": 1,
+                "text": (
+                    f"🚨 From {message['first_name']} ({message["user_id"]}) chat, "
+                    "the following message IDs were deleted:\n\n"
+                    f"{message["message_ids"]}"
+                ),
+            }
+
+            rq.post(
+                api_method,
+                params=params,
+            )
 
     response = "OK"
     return response, 200
