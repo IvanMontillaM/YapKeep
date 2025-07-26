@@ -84,6 +84,7 @@ def webhook():
                 disallowed_keys = [
                     "business_connection_id",
                     "caption",
+                    "caption_entities",
                     "chat",
                     "date",
                     "entities",
@@ -91,6 +92,7 @@ def webhook():
                     "forward_from_chat",
                     "forward_from_message_id",
                     "forward_origin",
+                    "forward_signature",
                     "from",
                     "link_preview_options",
                     "message_id",
