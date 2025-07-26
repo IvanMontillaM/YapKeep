@@ -77,6 +77,7 @@ def webhook():
             for key in tg_bizmsg_keys:
                 disallowed_keys = [
                     "business_connection_id",
+                    "caption",
                     "chat",
                     "date",
                     "from",
