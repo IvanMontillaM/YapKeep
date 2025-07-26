@@ -116,7 +116,9 @@ def webhook():
             # Business message text handler
             if tg_bizmsg_type == "text":
 
-                bizmsg = tg_update["business_message"]
+                bizmsg = tg_update.get("business_message") or tg_update.get(
+                    "edited_business_message"
+                )
 
                 message = {
                     "first_name": bizmsg["from"]["first_name"],
@@ -151,7 +153,9 @@ def webhook():
             # Business message with media handlers
             elif tg_bizmsg_type in media_handlers:
 
-                bizmsg = tg_update["business_message"]
+                bizmsg = tg_update.get("business_message") or tg_update.get(
+                    "edited_business_message"
+                )
 
                 message = {
                     "first_name": bizmsg["from"]["first_name"],
