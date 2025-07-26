@@ -37,6 +37,5 @@ DigitalOcean builds it for us in their [App Platform](https://cloud.digitalocean
 - `OPT_PRETTYPRINT`: Pretty-print output JSONs on HTTP requests.
 - `TG_API_KEY`: Telegram's main bot API key. Obtained through [BotFather](https://t.me/BotFather).
 - `TG_OUTPUT_CHAT_ID`: Output of the logging activity. It could be a channel, group or individual account.
-- `THREAD_EXCEPTIONS_ECHO`: Propagate thread's exceptions to console/logs. Set to `True` for debugging purposes, or most errors will be hidden. See more at: [Flask-Executor#Propagate Exceptions](https://flask-executor.readthedocs.io/en/latest/#propagate-exceptions)
 
 Refer to [.env-sample](/.env-sample) file for an updated environment variables template.
