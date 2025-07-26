@@ -32,49 +32,93 @@ app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = THREAD_EXCEPTIONS_ECHO
 e = Executor(app)
 
 
-# Main webhook to receive notifications from Telegram
+# Main webhook to receive updates from Telegram
 @app.route(f"/webhook/{BOT_WEBHOOK_KEY}", methods=["POST"])
 def webhook():
-    """Main webhook to receive Telegram notifications.
+    """Main webhook to receive Telegram updates.
 
-    :return: A response that Telegram understands as a chat action or answer callback query message
+    :return: A response that Telegram understands as a chat action or answer callback query message.
     """
     if request.method == "POST":
         # Insert raw payload into a variable
         tg_payload = request.data.decode("utf-8")
         # Parse payload body as JSON, it becomes the notification coming from Telegram
-        tg_notification = json.loads(tg_payload)
+        tg_update = json.loads(tg_payload)
+
         # Live print of the JSON payload, done with print() because of encoding errors
         print(
             str(datetime.datetime.now()).replace(".", ",")[:-3],
-            f"New update: {json.dumps(tg_notification)}",
+            f"New update: {json.dumps(tg_update)}",
         )
 
-        message = {
-            "first_name": tg_notification["business_message"]["from"]["first_name"],
-            "user_id": tg_notification["business_message"]["from"]["id"],
-            "message_id": tg_notification["business_message"]["message_id"],
-            "text": tg_notification["business_message"]["text"],
-        }
+        # Extract JSON keys and set the update type based on keys present
+        tg_notification_keys = tg_update.keys()
+        tg_update_type = ""
+        for key in tg_notification_keys:
+            disallowed_keys = ["update_id"]
+            if key not in disallowed_keys:
+                tg_update_type = key
 
-        # Set appropriate Telegram api_method to call
-        api_method = API_ENDPOINT + "/sendMessage"
+        # If not in allowed, handled list, early return.
+        allowed_update_types = [
+            "business_message",
+            "edited_business_message",
+            "deleted_business_messages",
+        ]
+        if tg_update_type not in allowed_update_types:
+            response = "OK"
+            return response, 200
 
-        # Prepare request params
-        params = {
-            "chat_id": TG_OUTPUT_CHAT_ID,
-            # "parse_mode": "Markdown",
-            "disable_web_page_preview": 1,
-            "text": (
-                f"{message['first_name']} ({message["user_id"]}) said (id: {message['message_id']}):\n\n"
-                f"{message['text']}"
-            ),
-        }
+        if tg_update_type == "business_message":
 
-        rq.post(
-            api_method,
-            params=params,
-        )
+            # Extract JSON keys and set the update type based on keys present
+            tg_bizmsg_keys = tg_update[tg_update_type].keys()
+            tg_bizmsg_type = ""
+            for key in tg_bizmsg_keys:
+                disallowed_keys = [
+                    "business_connection_id",
+                    "message_id",
+                    "from",
+                    "chat",
+                    "date",
+                ]
+                if key not in disallowed_keys:
+                    tg_bizmsg_type = key
+
+            # If not in allowed, handled list, early return.
+            allowed_bizmsg_types = [
+                "text",
+            ]
+            if tg_bizmsg_type not in allowed_bizmsg_types:
+                response = "OK"
+                return response, 200
+
+            # Business message text handler
+            message = {
+                "first_name": tg_update["business_message"]["from"]["first_name"],
+                "user_id": tg_update["business_message"]["from"]["id"],
+                "message_id": tg_update["business_message"]["message_id"],
+                "text": tg_update["business_message"]["text"],
+            }
+
+            # Set appropriate Telegram api_method to call
+            api_method = API_ENDPOINT + "/sendMessage"
+
+            # Prepare request params
+            params = {
+                "chat_id": TG_OUTPUT_CHAT_ID,
+                # "parse_mode": "Markdown",
+                "disable_web_page_preview": 1,
+                "text": (
+                    f"{message['first_name']} ({message["user_id"]}) said (id: {message['message_id']}):\n\n"
+                    f"{message['text']}"
+                ),
+            }
+
+            rq.post(
+                api_method,
+                params=params,
+            )
 
     response = "OK"
     return response, 200
