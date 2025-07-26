@@ -111,16 +111,3 @@ def str_to_bool(val):
         raise ValueError(f"invalid truth value {(val,)}")
 
     return bool_value
-
-
-def date_to_str(d: datetime, fmt: str) -> str:
-    """Function imported from a previous project.
-
-    Unclear why it was needed, but I suspect because of the difference between Dev platform and Prod environment.
-
-    :param d: The datetime object
-    :param fmt: The format to string
-    :return: The string formatted
-    """
-    # locale.setlocale(locale.LC_ALL, "es_VE")
-    return d.strftime(fmt.replace("%-", "%#") if os.name == "nt" else fmt)
