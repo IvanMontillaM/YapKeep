@@ -69,7 +69,13 @@ def webhook():
             response = "OK"
             return response, 200
 
-        if tg_update_type == "business_message":
+        api_method = ""
+        params = {}
+
+        if (
+            tg_update_type == "business_message"
+            or tg_update_type == "edited_business_message"
+        ):
 
             # Extract JSON keys and set the business message type based on keys present
             tg_bizmsg_keys = tg_update[tg_update_type].keys()
@@ -99,9 +105,6 @@ def webhook():
                 response = "OK"
                 return response, 200
 
-            api_method = ""
-            params = {}
-
             media_handlers = [
                 "document",
                 "photo",
@@ -125,15 +128,24 @@ def webhook():
                 # Set appropriate Telegram api_method to call
                 api_method = API_ENDPOINT + "/sendMessage"
 
+                caption = ""
+                if tg_update_type == "business_message":
+                    caption = (
+                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']}):\n\n"
+                        f"{message['text']}"
+                    )
+                elif tg_update_type == "edited_business_message":
+                    caption = (
+                        f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']}):\n\n"
+                        f"{message['text']}"
+                    )
+
                 # Prepare request params
                 params = {
                     "chat_id": TG_OUTPUT_CHAT_ID,
                     # "parse_mode": "Markdown",
                     "disable_web_page_preview": 1,
-                    "text": (
-                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']}):\n\n"
-                        f"{message['text']}"
-                    ),
+                    "text": caption,
                 }
 
             # Business message with media handlers
@@ -184,13 +196,17 @@ def webhook():
                     + "".join([word.capitalize() for word in tg_bizmsg_type.split("_")])
                 )
 
+                caption = ""
+                if tg_update_type == "business_message":
+                    caption = f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
+                elif tg_update_type == "edited_business_message":
+                    caption = f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']})"
+
                 # Prepare request params
                 params = {
                     "chat_id": TG_OUTPUT_CHAT_ID,
                     f"{tg_bizmsg_type}": message[tg_bizmsg_type],
-                    "caption": (
-                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
-                    ),
+                    "caption": caption,
                 }
 
                 try:
@@ -201,11 +217,6 @@ def webhook():
                 # Video notes don't support captions, avoid unnecessary call params
                 if tg_bizmsg_type == "video_note":
                     del params["caption"]
-
-            rq.post(
-                api_method,
-                params=params,
-            )
 
         elif tg_update_type == "deleted_business_messages":
 
@@ -231,10 +242,10 @@ def webhook():
                 ),
             }
 
-            rq.post(
-                api_method,
-                params=params,
-            )
+        rq.post(
+            api_method,
+            params=params,
+        )
 
     response = "OK"
     return response, 200
