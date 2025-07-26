@@ -86,7 +86,9 @@ def webhook():
                     "caption",
                     "chat",
                     "date",
+                    "entities",
                     "from",
+                    "link_preview_options",
                     "message_id",
                 ]
                 if key not in disallowed_keys:
