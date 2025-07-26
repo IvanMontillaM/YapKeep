@@ -225,7 +225,7 @@ def webhook():
                 }
 
                 try:
-                    params["caption"] += f": {message['caption']}"
+                    params["caption"] += f":\n\n{message['caption']}"
                 except KeyError:
                     pass
 
