@@ -1,6 +1,10 @@
 import datetime
 import os
 
+# To determine message type, we disregard the following list of keys. What should remain, is the message type,
+# whether it's text, audio, voice, photo, among others.
+#
+# Source: https://core.telegram.org/bots/api#message
 disallowed_keys_on_msg = [
     "message_id",
     "message_thread_id",

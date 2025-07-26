@@ -85,7 +85,9 @@ def webhook():
                 if key not in disallowed_keys:
                     tg_bizmsg_type = key
 
-            # If not in allowed, handled list, early return
+            # If not in allowed handled-messages list, early return
+            # TODO: Add handlers for Contacts, Locations and Venues
+            #   Add a handler by removing it from misc.disallowed_keys_on_msg
             allowed_bizmsg_types = [
                 "audio",
                 "document",
@@ -100,6 +102,7 @@ def webhook():
                 return response, 200
 
             # TODO: Add handlers for Contacts, Locations and Venues
+            #   Add a handler by removing it from misc.disallowed_keys_on_msg
             media_handlers = [
                 "audio",
                 "document",
