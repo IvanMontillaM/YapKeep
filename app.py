@@ -102,38 +102,6 @@ def webhook():
             api_method = ""
             params = {}
 
-            # Business message photo handler
-            if tg_bizmsg_type == "photo":
-                message = {
-                    "first_name": tg_update["business_message"]["from"]["first_name"],
-                    "user_id": tg_update["business_message"]["from"]["id"],
-                    "message_id": tg_update["business_message"]["message_id"],
-                    "photo": tg_update["business_message"]["photo"][::-1][0]["file_id"],
-                }
-
-                # Try grabbing the caption, if applicable
-                try:
-                    message["caption"] = tg_update["business_message"]["caption"]
-                except KeyError:
-                    pass
-
-                # Set appropriate Telegram api_method to call
-                api_method = API_ENDPOINT + "/sendPhoto"
-
-                # Prepare request params
-                params = {
-                    "chat_id": TG_OUTPUT_CHAT_ID,
-                    "caption": (
-                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
-                    ),
-                    "photo": message["photo"],
-                }
-
-                try:
-                    params["caption"] += f":\n\n{message['caption']}"
-                except KeyError:
-                    pass
-
             media_handlers = [
                 "document",
                 "photo",
@@ -238,6 +206,8 @@ def webhook():
                 api_method,
                 params=params,
             )
+
+        # elif tg_update_type == "deleted_business_messages":
 
     response = "OK"
     return response, 200
