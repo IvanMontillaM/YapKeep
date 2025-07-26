@@ -167,7 +167,7 @@ def webhook():
                     ),
                 }
 
-            # Business message document, photo, video, videonote and voicenote handler
+            # Business message with media handlers
             elif tg_bizmsg_type in media_handlers:
 
                 bizmsg = tg_update["business_message"]
@@ -218,10 +218,10 @@ def webhook():
                 # Prepare request params
                 params = {
                     "chat_id": TG_OUTPUT_CHAT_ID,
+                    f"{tg_bizmsg_type}": message[tg_bizmsg_type],
                     "caption": (
                         f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
                     ),
-                    f"{tg_bizmsg_type}": message[tg_bizmsg_type],
                 }
 
                 try:
