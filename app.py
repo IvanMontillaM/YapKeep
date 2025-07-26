@@ -59,7 +59,7 @@ def webhook():
             if key not in disallowed_keys:
                 tg_update_type = key
 
-        # If not in allowed, handled list, early return.
+        # If not in allowed, handled list, early return
         allowed_update_types = [
             "business_message",
             "edited_business_message",
@@ -71,7 +71,7 @@ def webhook():
 
         if tg_update_type == "business_message":
 
-            # Extract JSON keys and set the update type based on keys present
+            # Extract JSON keys and set the business message type based on keys present
             tg_bizmsg_keys = tg_update[tg_update_type].keys()
             tg_bizmsg_type = ""
             for key in tg_bizmsg_keys:
@@ -85,35 +85,108 @@ def webhook():
                 if key not in disallowed_keys:
                     tg_bizmsg_type = key
 
-            # If not in allowed, handled list, early return.
+            # If not in allowed, handled list, early return
             allowed_bizmsg_types = [
                 "text",
+                "photo",
+                "video",
             ]
             if tg_bizmsg_type not in allowed_bizmsg_types:
                 response = "OK"
                 return response, 200
 
+            api_method = ""
+            params = {}
             # Business message text handler
-            message = {
-                "first_name": tg_update["business_message"]["from"]["first_name"],
-                "user_id": tg_update["business_message"]["from"]["id"],
-                "message_id": tg_update["business_message"]["message_id"],
-                "text": tg_update["business_message"]["text"],
-            }
+            if tg_bizmsg_type == "text":
+                message = {
+                    "first_name": tg_update["business_message"]["from"]["first_name"],
+                    "user_id": tg_update["business_message"]["from"]["id"],
+                    "message_id": tg_update["business_message"]["message_id"],
+                    "text": tg_update["business_message"]["text"],
+                }
 
-            # Set appropriate Telegram api_method to call
-            api_method = API_ENDPOINT + "/sendMessage"
+                # Set appropriate Telegram api_method to call
+                api_method = API_ENDPOINT + "/sendMessage"
 
-            # Prepare request params
-            params = {
-                "chat_id": TG_OUTPUT_CHAT_ID,
-                # "parse_mode": "Markdown",
-                "disable_web_page_preview": 1,
-                "text": (
-                    f"{message['first_name']} ({message["user_id"]}) said (id: {message['message_id']}):\n\n"
-                    f"{message['text']}"
-                ),
-            }
+                # Prepare request params
+                params = {
+                    "chat_id": TG_OUTPUT_CHAT_ID,
+                    # "parse_mode": "Markdown",
+                    "disable_web_page_preview": 1,
+                    "text": (
+                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']}):\n\n"
+                        f"{message['text']}"
+                    ),
+                }
+
+            # Business message photo handler
+            elif tg_bizmsg_type == "photo":
+                message = {
+                    "first_name": tg_update["business_message"]["from"]["first_name"],
+                    "user_id": tg_update["business_message"]["from"]["id"],
+                    "message_id": tg_update["business_message"]["message_id"],
+                    "photo": tg_update["business_message"]["photo"][::-1][0]["file_id"],
+                }
+
+                # Try grabbing the caption, if applicable
+                try:
+                    message["caption"] = tg_update["business_message"]["caption"]
+                except KeyError:
+                    pass
+
+                # Set appropriate Telegram api_method to call
+                api_method = API_ENDPOINT + "/sendPhoto"
+
+                # Prepare request params
+                params = {
+                    "chat_id": TG_OUTPUT_CHAT_ID,
+                    # "parse_mode": "Markdown",
+                    "disable_web_page_preview": 1,
+                    "caption": (
+                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
+                    ),
+                    "photo": message["photo"],
+                }
+
+                try:
+                    params["caption"] += f":\n\n{message['caption']}"
+                except KeyError:
+                    pass
+
+            # Business message video handler
+            elif tg_bizmsg_type == "video":
+                message = {
+                    "first_name": tg_update["business_message"]["from"]["first_name"],
+                    "user_id": tg_update["business_message"]["from"]["id"],
+                    "message_id": tg_update["business_message"]["message_id"],
+                    "video": tg_update["business_message"]["video"]["file_id"],
+                }
+
+                # Try grabbing the caption, if applicable
+                try:
+                    message["caption"] = tg_update["business_message"]["caption"]
+                except KeyError:
+                    pass
+
+                # Set appropriate Telegram api_method to call
+                api_method = API_ENDPOINT + "/sendVideo"
+
+                # Prepare request params
+                params = {
+                    "chat_id": TG_OUTPUT_CHAT_ID,
+                    # "parse_mode": "Markdown",
+                    "disable_web_page_preview": 1,
+                    "caption": (
+                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
+                    ),
+                    "video": message["video"],
+                }
+
+                try:
+                    params["caption"] += f":\n\n{message['caption']}"
+                except KeyError:
+                    pass
 
             rq.post(
                 api_method,
