@@ -96,6 +96,7 @@ def webhook():
                     "from",
                     "link_preview_options",
                     "message_id",
+                    "reply_markup",
                 ]
                 if key not in disallowed_keys:
                     tg_bizmsg_type = key
