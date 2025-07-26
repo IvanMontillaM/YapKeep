@@ -81,28 +81,13 @@ def webhook():
             tg_bizmsg_keys = tg_update[tg_update_type].keys()
             tg_bizmsg_type = ""
             for key in tg_bizmsg_keys:
-                disallowed_keys = [
-                    "business_connection_id",
-                    "caption",
-                    "caption_entities",
-                    "chat",
-                    "date",
-                    "entities",
-                    "forward_date",
-                    "forward_from_chat",
-                    "forward_from_message_id",
-                    "forward_origin",
-                    "forward_signature",
-                    "from",
-                    "link_preview_options",
-                    "message_id",
-                    "reply_markup",
-                ]
+                disallowed_keys = misc.disallowed_keys_on_msg
                 if key not in disallowed_keys:
                     tg_bizmsg_type = key
 
             # If not in allowed, handled list, early return
             allowed_bizmsg_types = [
+                "audio",
                 "document",
                 "photo",
                 "text",
@@ -116,6 +101,7 @@ def webhook():
 
             # TODO: Add handlers for Contacts, Locations and Venues
             media_handlers = [
+                "audio",
                 "document",
                 "photo",
                 "video",
