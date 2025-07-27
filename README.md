@@ -1,5 +1,7 @@
 # YapKeep
-Telegram bot that stores messages.
+Telegram bot that forward messages on a separate chat (channel, group or account).
+
+Intended to keep evidence when scammers edit or delete messages. Anti-gaslighting tool.
 
 ## How to build and deploy on DigitalOcean
 DigitalOcean builds it for us in their [App Platform](https://cloud.digitalocean.com/apps/).
@@ -33,9 +35,18 @@ DigitalOcean builds it for us in their [App Platform](https://cloud.digitalocean
 
 ### Environment variables required to run
 - `BOT_WEBHOOK_KEY`: Part of the URL that Telegram hits when sending us notifications. Used as an anti-spam measure, security-through-obscurity (Currently, Telegram doesn't support a better way).
-  - Example: `https://<app_fdqn>/webhook/<bot_webhook_key>`
+  - Just generate any random alphanumeric string, with at least 16 characters.
+  - How it ends up looking: `https://<app_fdqn>/webhook/<bot_webhook_key>`
 - `OPT_PRETTYPRINT`: Pretty-print output JSONs on HTTP requests.
 - `TG_API_KEY`: Telegram's main bot API key. Obtained through [BotFather](https://t.me/BotFather).
-- `TG_OUTPUT_CHAT_ID`: Output of the logging activity. It could be a channel, group or individual account.
+- `TG_OUTPUT_CHAT_ID`: Output chat of the message logging activity. It could be a channel, group or individual account.
 
 Refer to [.env-sample](/.env-sample) file for an updated environment variables template.
+
+### Telegram bot configuration
+
+_This page has been intentionally left blank._
+
+Open a new GitHub Issue on this repo, and I'll provide an email for professional services.
+
+I charge a one-time setup fee on your server.
