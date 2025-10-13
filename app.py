@@ -5,6 +5,7 @@ import os
 
 import requests as rq
 from flask import Flask, request
+from jinja2 import Environment, FileSystemLoader
 
 from bot import misc
 
@@ -22,6 +23,7 @@ API_ENDPOINT = "https://api.telegram.org/bot" + os.getenv("TG_API_KEY").strip()
 
 # Set application configuration
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = IS_PRETTYPRINT
+environment = Environment(loader=FileSystemLoader("templates/"))
 
 
 # Main webhook to receive updates from Telegram
@@ -112,6 +114,9 @@ def webhook():
                 )
 
                 message = {
+                    "chat_fname": bizmsg["chat"]["first_name"],
+                    "chat_id": bizmsg["chat"]["id"],
+                    "user_fname": bizmsg["from"]["first_name"],
                     "first_name": bizmsg["from"]["first_name"],
                     "user_id": bizmsg["from"]["id"],
                     "message_id": bizmsg["message_id"],
@@ -121,12 +126,14 @@ def webhook():
                 # Set appropriate Telegram api_method to call
                 api_method = API_ENDPOINT + "/sendMessage"
 
+                template = environment.get_template(f"business_message.jinja")
                 caption = ""
                 if tg_update_type == "business_message":
-                    caption = (
-                        f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']}):\n\n"
-                        f"{message['text']}"
-                    )
+                    # caption = (
+                    #     f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']}):\n\n"
+                    #     f"{message['text']}"
+                    # )
+                    caption = template.render(message).strip()
                 elif tg_update_type == "edited_business_message":
                     caption = (
                         f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']}):\n\n"
@@ -136,7 +143,7 @@ def webhook():
                 # Prepare request params
                 params = {
                     "chat_id": TG_OUTPUT_CHAT_ID,
-                    # "parse_mode": "Markdown",
+                    "parse_mode": "Markdown",
                     "disable_web_page_preview": 1,
                     "text": caption,
                 }
