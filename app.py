@@ -193,6 +193,7 @@ def webhook():
                 # Prepare request params
                 params = {
                     "chat_id": TG_OUTPUT_CHAT_ID,
+                    "parse_mode": "Markdown",
                     f"{tg_bizmsg_type}": message[tg_bizmsg_type],
                     "caption": caption,
                 }
