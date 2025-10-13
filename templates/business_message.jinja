@@ -11,9 +11,10 @@
 {% endif %}
 
 {{ title }}
-With: {{ chat_fname }} (`{{ chat_id }}`)
-Who: {{ user_fname }} (`{{ user_id }}`)
-{{ msg_id_caption }}: `{{ message_id }}` (type: `{{ msg_type }}`)
-{% if text or caption %}{{ msg_text_caption }}:
+
+*With:* {{ chat_fname }} (`{{ chat_id }}`)
+*Who:* {{ user_fname }} (`{{ user_id }}`)
+*{{ msg_id_caption }}:* `{{ message_id }}` (type: `{{ msg_type }}`)
+{% if text or caption %}*{{ msg_text_caption }}:*
 
 {{ text or caption }}{% endif %}

@@ -128,7 +128,7 @@ def webhook():
                 # Set appropriate Telegram api_method to call
                 api_method = API_ENDPOINT + "/sendMessage"
 
-                template = environment.get_template(f"business_message.jinja")
+                template = environment.get_template("business_message.jinja")
                 caption = ""
                 if tg_update_type == "business_message":
                     caption = template.render(message).strip()
@@ -164,7 +164,7 @@ def webhook():
                     api_method = API_ENDPOINT + "/sendMessage"
 
                     # Prepare request params
-                    template = environment.get_template(f"business_message.jinja")
+                    template = environment.get_template("business_message.jinja")
                     params = {
                         "chat_id": TG_OUTPUT_CHAT_ID,
                         "parse_mode": "Markdown",
@@ -183,7 +183,7 @@ def webhook():
                     + "".join([word.capitalize() for word in tg_bizmsg_type.split("_")])
                 )
 
-                template = environment.get_template(f"business_message.jinja")
+                template = environment.get_template("business_message.jinja")
                 caption = ""
                 if tg_update_type == "business_message":
                     caption = template.render(message).strip()
@@ -208,23 +208,19 @@ def webhook():
             bizupdate = tg_update[tg_update_type]
 
             message = {
-                "first_name": bizupdate["chat"]["first_name"],
-                "user_id": bizupdate["chat"]["id"],
+                "chat_fname": bizupdate["chat"]["first_name"],
+                "chat_id": bizupdate["chat"]["id"],
                 "message_ids": bizupdate["message_ids"],
             }
 
             api_method = API_ENDPOINT + "/sendMessage"
 
+            template = environment.get_template("deleted_business_messages.jinja")
             # Prepare request params
             params = {
                 "chat_id": TG_OUTPUT_CHAT_ID,
-                # "parse_mode": "Markdown",
-                "disable_web_page_preview": 1,
-                "text": (
-                    f"🚨 From {message['first_name']} ({message["user_id"]}) chat, "
-                    "the following message IDs were deleted:\n\n"
-                    f"{message["message_ids"]}"
-                ),
+                "parse_mode": "Markdown",
+                "text": template.render(message).strip(),
             }
 
         rq.post(

@@ -1,0 +1,14 @@
+{# templates/deleted_business_messages.jinja #}
+
+{% if message_ids|length >= 2 %}
+{% set title = "🚨 *DELETED MESSAGES*" %}
+{% set del_msgids_caption = "Deleted message IDs" %}
+{% else %}
+{% set title = "🚨 *DELETED MESSAGE*" %}
+{% set del_msgids_caption = "Deleted message ID" %}
+{% endif %}
+
+{{ title }}
+
+*In the chat with*: {{ chat_fname }} (`{{ chat_id }}`)
+*{{ del_msgids_caption }}:* {{ message_ids }}
