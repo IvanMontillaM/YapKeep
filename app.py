@@ -117,6 +117,7 @@ def webhook():
                 "user_id": bizmsg["from"]["id"],
                 "message_id": bizmsg["message_id"],
                 "text": bizmsg.get("text"),
+                "caption": bizmsg.get("caption"),
                 "is_edited": False,
                 "msg_type": tg_bizmsg_type,
             }
@@ -197,11 +198,6 @@ def webhook():
                     f"{tg_bizmsg_type}": message[tg_bizmsg_type],
                     "caption": caption,
                 }
-
-                try:
-                    params["caption"] += f":\n\n{message['caption']}"
-                except KeyError:
-                    pass
 
                 # Video notes don't support captions, avoid unnecessary call params
                 if tg_bizmsg_type == "video_note":
