@@ -1,6 +1,3 @@
-import datetime
-import os
-
 # To determine message type, we disregard the following list of keys. What should remain, is the message type,
 # whether it's text, audio, voice, photo, among others.
 #
@@ -25,6 +22,7 @@ disallowed_keys_on_msg = [
     "delete_chat_photo",
     "dice",
     "direct_message_price_changed",
+    "direct_messages_topic",
     "edit_date",
     "effect_id",
     "entities",
@@ -49,6 +47,7 @@ disallowed_keys_on_msg = [
     "invoice",
     "is_automatic_forward",
     "is_from_offline",
+    "is_paid_post",
     "is_topic_message",
     "left_chat_member",
     "link_preview_options",
@@ -72,6 +71,7 @@ disallowed_keys_on_msg = [
     "quote",
     "refunded_payment",
     "reply_markup",
+    "reply_to_checklist_task_id",
     "reply_to_message",
     "reply_to_story",
     "sender_boost_count",
@@ -81,7 +81,14 @@ disallowed_keys_on_msg = [
     "sticker",
     "story",
     "successful_payment",
+    "suggested_post_approval_failed",
+    "suggested_post_approved",
+    "suggested_post_declined",
+    "suggested_post_info",
+    "suggested_post_paid",
+    "suggested_post_refunded",
     "supergroup_chat_created",
+    "text",
     "unique_gift",
     "users_shared",
     "venue",
