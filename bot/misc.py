@@ -88,7 +88,6 @@ disallowed_keys_on_msg = [
     "suggested_post_paid",
     "suggested_post_refunded",
     "supergroup_chat_created",
-    "text",
     "unique_gift",
     "users_shared",
     "venue",

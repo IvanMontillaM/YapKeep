@@ -1,9 +1,19 @@
 {# templates/business_message.jinja #}
 
-*MESSAGE*
-In the chat: {{ chat_fname }} (`{{ chat_id }}`)
-Who: {{ user_fname }} (`{{ user_id }}`)
-Message ID: `{{ message_id }}`
-Message:
+{% if is_edited %}
+{% set title = "🚨 *EDITED MESSAGE*" %}
+{% set msg_id_caption = "Edited message ID" %}
+{% set msg_text_caption = "New text" %}
+{% else %}
+{% set title = "*NEW MESSAGE*" %}
+{% set msg_id_caption = "Message ID" %}
+{% set msg_text_caption = "Text" %}
+{% endif %}
 
-{{ text }}
+{{ title }}
+With: {{ chat_fname }} (`{{ chat_id }}`)
+Who: {{ user_fname }} (`{{ user_id }}`)
+{{ msg_id_caption }}: `{{ message_id }}` (type: `{{ msg_type }}`)
+{% if text %}{{ msg_text_caption }}:
+
+{{ text }}{% endif %}

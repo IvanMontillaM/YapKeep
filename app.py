@@ -106,22 +106,23 @@ def webhook():
                 "voice",
             ]
 
+            bizmsg = tg_update.get("business_message") or tg_update.get(
+                "edited_business_message"
+            )
+
+            message = {
+                "chat_fname": bizmsg["chat"]["first_name"],
+                "chat_id": bizmsg["chat"]["id"],
+                "user_fname": bizmsg["from"]["first_name"],
+                "user_id": bizmsg["from"]["id"],
+                "message_id": bizmsg["message_id"],
+                "text": bizmsg["text"],
+                "is_edited": False,
+                "msg_type": tg_bizmsg_type,
+            }
+
             # Business message text handler
             if tg_bizmsg_type == "text":
-
-                bizmsg = tg_update.get("business_message") or tg_update.get(
-                    "edited_business_message"
-                )
-
-                message = {
-                    "chat_fname": bizmsg["chat"]["first_name"],
-                    "chat_id": bizmsg["chat"]["id"],
-                    "user_fname": bizmsg["from"]["first_name"],
-                    "first_name": bizmsg["from"]["first_name"],
-                    "user_id": bizmsg["from"]["id"],
-                    "message_id": bizmsg["message_id"],
-                    "text": bizmsg["text"],
-                }
 
                 # Set appropriate Telegram api_method to call
                 api_method = API_ENDPOINT + "/sendMessage"
@@ -135,10 +136,12 @@ def webhook():
                     # )
                     caption = template.render(message).strip()
                 elif tg_update_type == "edited_business_message":
-                    caption = (
-                        f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']}):\n\n"
-                        f"{message['text']}"
-                    )
+                    message["is_edited"] = True
+                    # caption = (
+                    #     f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']}):\n\n"
+                    #     f"{message['text']}"
+                    # )
+                    caption = template.render(message).strip()
 
                 # Prepare request params
                 params = {
@@ -150,16 +153,6 @@ def webhook():
 
             # Business message with media handlers
             elif tg_bizmsg_type in media_handlers:
-
-                bizmsg = tg_update.get("business_message") or tg_update.get(
-                    "edited_business_message"
-                )
-
-                message = {
-                    "first_name": bizmsg["from"]["first_name"],
-                    "user_id": bizmsg["from"]["id"],
-                    "message_id": bizmsg["message_id"],
-                }
 
                 if tg_bizmsg_type == "photo":
                     message[tg_bizmsg_type] = bizmsg[tg_bizmsg_type][::-1][0]["file_id"]
@@ -178,12 +171,14 @@ def webhook():
                     api_method = API_ENDPOINT + "/sendMessage"
 
                     # Prepare request params
+                    template = environment.get_template(f"business_message.jinja")
                     params = {
                         "chat_id": TG_OUTPUT_CHAT_ID,
-                        "text": (
-                            f"{message['first_name']} ({message["user_id"]}) sent "
-                            f"a video note (id: {message['message_id']}):"
-                        ),
+                        # "text": (
+                        #     f"{message['first_name']} ({message["user_id"]}) sent "
+                        #     f"a video note (id: {message['message_id']}):"
+                        # ),
+                        "text": template.render(message).strip(),
                     }
 
                     rq.post(
@@ -198,11 +193,15 @@ def webhook():
                     + "".join([word.capitalize() for word in tg_bizmsg_type.split("_")])
                 )
 
+                template = environment.get_template(f"business_message.jinja")
                 caption = ""
                 if tg_update_type == "business_message":
-                    caption = f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
+                    # caption = f"{message['first_name']} ({message["user_id"]}) sent (id: {message['message_id']})"
+                    caption = template.render(message).strip()
                 elif tg_update_type == "edited_business_message":
-                    caption = f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']})"
+                    message["is_edited"] = True
+                    # caption = f"🚨 {message['first_name']} ({message["user_id"]}) edited (id: {message['message_id']})"
+                    caption = template.render(message).strip()
 
                 # Prepare request params
                 params = {
