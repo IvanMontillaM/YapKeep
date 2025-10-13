@@ -1,5 +1,5 @@
 # YapKeep
-Telegram bot that forward messages on a separate chat (channel, group or account).
+Telegram bot that forwards messages to a separate chat (channel, group or account).
 
 Intended to keep evidence when scammers edit or delete messages. Anti-gaslighting tool.
 
