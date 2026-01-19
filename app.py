@@ -45,20 +45,16 @@ def webhook():
             f"New update: {json.dumps(tg_update)}",
         )
 
-        # Extract JSON keys and set the update type based on keys present
-        tg_notification_keys = tg_update.keys()
-        tg_update_type = ""
-        for key in tg_notification_keys:
-            disallowed_keys = ["update_id"]
-            if key not in disallowed_keys:
-                tg_update_type = key
-
         # If not in allowed, handled list, early return
         allowed_update_types = [
             "business_message",
             "deleted_business_messages",
             "edited_business_message",
         ]
+
+        # Extract JSON keys and set the update type based on keys present
+        tg_update_type = misc.get_update_type(tg_update, allowed_update_types)
+
         if tg_update_type not in allowed_update_types:
             response = "OK"
             return response, 200
@@ -71,17 +67,9 @@ def webhook():
             or tg_update_type == "edited_business_message"
         ):
 
-            # Extract JSON keys and set the business message type based on keys present
-            tg_bizmsg_keys = tg_update[tg_update_type].keys()
-            tg_bizmsg_type = ""
-            for key in tg_bizmsg_keys:
-                disallowed_keys = misc.disallowed_keys_on_msg
-                if key not in disallowed_keys:
-                    tg_bizmsg_type = key
-
             # If not in allowed handled-messages list, early return
+            # Source: https://core.telegram.org/bots/api#message
             # TODO: Add handlers for Contacts, Locations and Venues
-            #   Add a handler by removing it from misc.disallowed_keys_on_msg
             allowed_bizmsg_types = [
                 "audio",
                 "document",
@@ -91,20 +79,16 @@ def webhook():
                 "video_note",
                 "voice",
             ]
+
+            # Extract JSON keys and set the business message type based on keys present
+            tg_bizmsg_type = misc.get_bizmsg_type(tg_update, allowed_bizmsg_types)
+
             if tg_bizmsg_type not in allowed_bizmsg_types:
                 response = "OK"
                 return response, 200
 
-            # TODO: Add handlers for Contacts, Locations and Venues
-            #   Add a handler by removing it from misc.disallowed_keys_on_msg
-            media_handlers = [
-                "audio",
-                "document",
-                "photo",
-                "video",
-                "video_note",
-                "voice",
-            ]
+            # Everything else, except 'text' message type
+            media_handlers = [t for t in allowed_bizmsg_types if t != "text"]
 
             bizmsg = tg_update.get("business_message") or tg_update.get(
                 "edited_business_message"
