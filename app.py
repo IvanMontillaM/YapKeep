@@ -224,7 +224,7 @@ def bot_index():
     :return: Returns a redirect to the main website
     """
     redirection_http_code, redirection_http_message = (301, "Moved Permanently")
-    remote_addr = request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
+    remote_addr = request.remote_addr
     redirect = '<head><meta http-equiv="refresh" content="0; URL=\'https://www.bing.com\'" /></head>'
     logger.info(
         "%s hit the main route; Redirecting (%s %s)",
